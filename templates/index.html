@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>SKU Triage</title>
+    <style>
+      body { font-family: Arial, sans-serif; margin: 2rem; }
+      input, button { padding: 0.4rem; font-size: 1rem; }
+      #results { margin-top: 1rem; }
+      table { border-collapse: collapse; width: 100%; }
+      td, th { border: 1px solid #ddd; padding: 8px; }
+    </style>
+  </head>
+  <body>
+    <h1>SKU Triage</h1>
+
+    <form id="uploadForm">
+      <label>Subir CSV de SKUs: <input type="file" id="file" name="file" accept=".csv"/></label>
+      <button type="submit">Subir</button>
+    </form>
+    <div id="uploadResult"></div>
+
+    <hr/>
+
+    <form id="triageForm">
+      <label>SKU o texto: <input type="text" id="sku"/></label>
+      <button type="submit">Triage</button>
+    </form>
+    <div id="results"></div>
+
+    <script>
+    document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const f = document.getElementById('file').files[0];
+      if (!f) return alert('Selecciona un CSV');
+      const fd = new FormData(); fd.append('file', f);
+      const res = await fetch('/upload', { method: 'POST', body: fd });
+      const body = await res.json();
+      document.getElementById('uploadResult').innerText = `Importados: ${body.imported}`;
+    });
+
+    document.getElementById('triageForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const sku = document.getElementById('sku').value.trim();
+      if (!sku) return alert('Escribe un SKU o texto');
+      const res = await fetch('/triage', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ sku }) });
+      const j = await res.json();
+      const out = document.getElementById('results');
+      out.innerHTML = '';
+      if (j.result === 'exact') {
+        out.innerHTML = `<h3>Encontrado</h3><table><tr><th>SKU</th><th>Desc</th><th>Stock</th></tr><tr><td>${j.sku}</td><td>${j.description}</td><td>${j.stock}</td></tr></table>`;
+      } else if (j.result === 'partial') {
+        let html = '<h3>Coincidencias parciales</h3><table><tr><th>SKU</th><th>Desc</th><th>Stock</th></tr>';
+        for (const m of j.matches) html += `<tr><td>${m.sku}</td><td>${m.description}</td><td>${m.stock}</td></tr>`;
+        html += '</table>';
+        out.innerHTML = html;
+      } else {
+        out.innerHTML = '<p>No encontrado</p>';
+      }
+    });
+    </script>
+  </body>
+</html>
