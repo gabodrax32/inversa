@@ -1,0 +1,8 @@
+services:
+  - type: web
+    name: sku-triage
+    env: docker
+    repo: https://github.com/gabodrax32/inversa
+    branch: main
+    dockerfilePath: Dockerfile
+    plan: free
