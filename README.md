@@ -35,3 +35,13 @@ docker run -p 5000:5000 sku-triage:latest
 
 Notes:
 - If you prefer a temporary public URL, use `ngrok` locally: `ngrok http 5000` (requires ngrok authtoken).
+
+## Inventory on GitHub Pages
+
+The static inventory page is published from `site/index.html` by the
+`Deploy inventory to GitHub Pages` workflow. After a successful deployment,
+it is available at https://gabodrax32.github.io/inversa/.
+
+This static version stores accounts and inventory data in each browser's local
+storage. It does not share data between browsers or devices and does not use
+the Flask database.
