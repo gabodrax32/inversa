@@ -42,6 +42,10 @@ The static inventory page is published from `site/index.html` by the
 `Deploy inventory to GitHub Pages` workflow. After a successful deployment,
 it is available at https://gabodrax32.github.io/inversa/.
 
+Before the first deployment, enable Pages in the repository settings:
+**Settings > Pages > Build and deployment > Source > GitHub Actions**. Then
+run the workflow from the Actions tab if it has not started automatically.
+
 This static version stores accounts and inventory data in each browser's local
 storage. It does not share data between browsers or devices and does not use
 the Flask database.
